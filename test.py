@@ -2,16 +2,23 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
 
-# load page
-html = urlopen("http://www.donbest.com/nba/odds/20160225.html")
-bsObj = BeautifulSoup(html.read(), "html.parser")
+# load pages
+stat_html = urlopen("http://www.donbest.com/nba/odds/20160224.html")
+ref_html = urlopen("http://www.basketball-reference.com/boxscores/201602250BOS.html")
+stat_bs_obj = BeautifulSoup(stat_html.read(), "html.parser")
+ref_bs_obj = BeautifulSoup(ref_html.read(), "html.parser")
 
-table = bsObj.find("table")
+stat_table = stat_bs_obj.find("table")
+ref_table = ref_bs_obj.find("table", {"class":"margin_top small_text"})
+
+refs = ref_table.find(text="Officials:").parent.next_sibling.text.split(",")
+print(refs)
+
 
 # scrape info
-teams = table.findAll("span", {"class":"oddsTeamWLink"})
-final_scores = table.findAll("div", {"id":re.compile("_Div_Score_.*")})
-lines = table.findAll("div", {"id":re.compile("_Div_Line_.*_23$")})
+teams = stat_table.findAll("span", {"class":"oddsTeamWLink"})
+final_scores = stat_table.findAll("div", {"id":re.compile("_Div_Score_.*")})
+lines = stat_table.findAll("div", {"id":re.compile("_Div_Line_.*_23$")})
 
 # remove tags
 teams = [team.text for team in teams]
@@ -34,9 +41,10 @@ for i in range(len(teams)):
 			temp_dict["O/UMargin"] = (final_scores[i] + final_scores[i + 1]) - lines[i + 1]
 			temp_dict["HomeCoverBy"] = (final_scores[i + 1] - final_scores[i]) - lines[i]
 
-
 		games.append(temp_dict)
 
 
 print(games)
+
+
 		
