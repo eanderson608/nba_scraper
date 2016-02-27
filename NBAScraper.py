@@ -1,6 +1,6 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-from NBAScrapeFormat import convert_team_names
+from NBAScrapeFormat import convert_team_names, get_dates_in_range
 import re
 import pprint
 import time
@@ -9,15 +9,15 @@ import os,sys
 
 def main():
 
-	print(sys.argv)
+	start_date = sys.argv[1]
+	end_date = sys.argv[2]
+	output_filename = sys.argv[3]
 
-	output_filename = "output.json"
+	# get game dates
+	game_date_list = get_dates_in_range(start_date, end_date)
 
-	# set game date
-	game_date = 20160222
-	game_date = str(game_date)
-
-	get_stats(game_date, output_filename)
+	for date in game_date_list:
+		get_stats(date, output_filename)
 
 def get_stats(game_date, output_filename):
 
@@ -82,7 +82,7 @@ def get_stats(game_date, output_filename):
 			print()
 
 			# give server a break
-			time.sleep(3)
+			time.sleep(1)
 
 			# append dict to json
 			f = open(output_filename, 'a')
