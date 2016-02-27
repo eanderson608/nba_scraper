@@ -9,12 +9,11 @@ import os,sys
 
 def main():
 
-	start_date = sys.argv[1]
-	end_date = sys.argv[2]
-	output_filename = sys.argv[3]
+
+	output_filename = "nba_stats_15_16.json"
 
 	# get game dates
-	game_date_list = get_dates_in_range(start_date, end_date)
+	game_date_list = get_dates_in_range("20151002", "20151002")
 
 	for date in game_date_list:
 		get_stats(date, output_filename)
@@ -27,22 +26,33 @@ def get_stats(game_date, output_filename):
 
 	# find stat table in page
 	stat_table = stat_bs_obj.find("table")
+	print(stat_table.prettify())
 
-	# scrape info
-	teams = stat_table.findAll("span", {"class":"oddsTeamWLink"})
-	final_scores = stat_table.findAll("div", {"id":re.compile("_Div_Score_.*")})
-	lines = stat_table.findAll("div", {"id":re.compile("_Div_Line_.*_23$")})
+	try: # retrieving info
+	
+		# scrape info
+		teams = stat_table.findAll("span", {"class":"oddsTeamWLink"})
+		final_scores = stat_table.findAll("div", {"id":re.compile("_Div_Score_.*")})
+		lines = stat_table.findAll("div", {"id":re.compile("_Div_Line_.*_23$")})
 
-	# remove tags
-	teams = [team.text for team in teams]
-	final_scores = [float(final.text) for final in final_scores]
-	lines = [float(line.text) for line in lines]
+		# remove tags
+		teams = [team.text for team in teams]
+		final_scores = [float(final.text) for final in final_scores]
+		lines = [float(line.text) for line in lines]
+
+	except ValueError: # return error when game data cannot be found
+		msg = "ERROR ValueError: could not load game date for date: " + game_date
+
+		# save error to output file
+		f = open(output_filename, 'a')
+		json.dump(msg, f)
+		f.write(os.linesep)
+		return
 
 	# convert team names (imported from NBAScrapeFormat.py)
 	convert_team_names(teams)
 
 	# assemble game dicts
-	games = []
 	for i in range(len(teams)):
 
 		# for only every pair of teams
