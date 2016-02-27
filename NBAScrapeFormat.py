@@ -15,7 +15,7 @@ def convert_team_names(teams):
 			teams[i] = "CLE"
 
 		elif teams[i] == "Golden State Warriors":
-			teams[i] = "GS"
+			teams[i] = "GSW"
 
 		elif teams[i] == "Orlando Magic":
 			teams[i] = "ORL"
@@ -66,7 +66,7 @@ def convert_team_names(teams):
 			teams[i] = "MIA"
 
 		elif teams[i] == "Toronto Raptors":
-			teams[i] = "ORL"
+			teams[i] = "TOR"
 
 		elif teams[i] == "Minnesota Timberwolves":
 			teams[i] = "MIN"
