@@ -69,6 +69,9 @@ def convert_team_names(teams):
 		elif teams[i] == "Portland Trail Blazers":
 			teams[i] = "POR"
 
+		elif teams[i] == "Portland Trailblazers":
+			teams[i] = "POR"
+
 		elif teams[i] == "San Antonio Spurs":
 			teams[i] = "SAS"
 
@@ -117,7 +120,7 @@ def convert_team_names(teams):
 		elif teams[i] == "Chicago Bulls":
 			teams[i] = "CHI"
 
-		else: # "Chicago Bulls"
+		else:
 			teams[i] = "ERROR BAD TEAM NAME"
 
 	return teams

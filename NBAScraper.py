@@ -9,11 +9,10 @@ import os,sys
 
 def main():
 
-
-	output_filename = "nba_stats_15_16.json"
+	output_filename = "nba_stats_14_15.json"
 
 	# get game dates
-	game_date_list = get_dates_in_range("20151002", "20151002")
+	game_date_list = get_dates_in_range("20150306", "20150306")
 
 	for date in game_date_list:
 		get_stats(date, output_filename)
@@ -26,10 +25,9 @@ def get_stats(game_date, output_filename):
 
 	# find stat table in page
 	stat_table = stat_bs_obj.find("table")
-	print(stat_table.prettify())
 
 	try: # retrieving info
-	
+
 		# scrape info
 		teams = stat_table.findAll("span", {"class":"oddsTeamWLink"})
 		final_scores = stat_table.findAll("div", {"id":re.compile("_Div_Score_.*")})
@@ -40,8 +38,18 @@ def get_stats(game_date, output_filename):
 		final_scores = [float(final.text) for final in final_scores]
 		lines = [float(line.text) for line in lines]
 
+
 	except ValueError: # return error when game data cannot be found
 		msg = "ERROR ValueError: could not load game date for date: " + game_date
+
+		# save error to output file
+		f = open(output_filename, 'a')
+		json.dump(msg, f)
+		f.write(os.linesep)
+		return
+
+	except AttributeError: # return error when game data cannot be found
+		msg = "ERROR AttributeError: could not load game date for date: " + game_date
 
 		# save error to output file
 		f = open(output_filename, 'a')
@@ -92,7 +100,7 @@ def get_stats(game_date, output_filename):
 			print()
 
 			# give server a break
-			time.sleep(1)
+			time.sleep(3)
 
 			# append dict to json
 			f = open(output_filename, 'a')
